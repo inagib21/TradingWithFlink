@@ -1,11 +1,13 @@
-from datetime import datetime
 import json
 from typing import List
-from kafka import KafkaProducer
-from alpaca_config import config
+from datetime import datetime
 from alpaca_trade_api import REST
-from alpaca_trade_api import URL
+from alpaca_trade_api.common import URL
 from alpaca.common import Sort
+from kafka import KafkaProducer
+
+from alpaca_config.keys import config
+from utils import get_sentiment
 
 def get_producer(brokers: List[str]):
     producer = KafkaProducer(
@@ -43,7 +45,7 @@ def produce_historical_news(
 
         )
 
-        for i, in row in enumerate(news):
+        for i, row in enumerate(news):
             article = row._row
             should_proceed = any(term in article['headline'] for term in symbools)
             if not should_proceed:
@@ -56,6 +58,23 @@ def produce_historical_news(
             article['timestamp_ms'] = timestamp_ms
             article['data_provider'] = 'alpaca'
             article['sentiment'] = get_sentiment(article['headline'])
+            article.pop('symbols')
+            article['symbol'] = symbol
+
+            print(article)
+
+            try:
+                future = redpanda_client.send(
+                    topic = topic,
+                    key = symbol,
+                    value= article,
+                    timestamp_ms=timestamp_ms
+                )
+                _= future.get('timeout=10')
+                print(f'Sent{i+1} artiicles to{topic}')
+            except  Exception as e:
+                print(f'Failed to send article: {article}')
+                print(e)
 
 
 
