@@ -15,7 +15,7 @@ def get_producer(brokers: List[str]):
         key_serializer = str.encode,
         value_serializer =lambda v: json.dumps(v). enccode('utf-8')
     )
-   
+    return producer
 
 def produce_historical_news(
         redpanda_client: KafkaProducer,
@@ -46,8 +46,8 @@ def produce_historical_news(
         )
 
         for i, row in enumerate(news):
-            article = row._row
-            should_proceed = any(term in article['headline'] for term in symbools)
+            article = row._raw
+            should_proceed = any(term in article['headline'] for term in symbols)
             if not should_proceed:
                 continue
 

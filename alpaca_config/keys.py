@@ -1,7 +1,7 @@
 config = {
-  'key_id': 'AKMJ2RZ9INZOBLO6FPTPs',
-  'secret_key': 'AgkUWBuWVPzzWKKJ2iJ4nYQWNjE20S5WWj5wDdFq',
+  'key_id': 'PKCDP9RQHJZOECGUGKUZ',
+  'secret_key': 'peDuhBk8XWZMPVOagIbCPQJn7IuUPMqpsoVGZ1fW',
  'redpanda_brokers': 'localhost:9092, localhost:9093',
- 'base_url': 'https://api.alpaca.markets',
+ 'base_url': 'https://data.alpaca.markets/v1beta/news',
  'trade_api_base_url': 'https://paper-api.alpaca.markets/v2'
 }
